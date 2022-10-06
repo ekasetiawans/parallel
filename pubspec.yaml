@@ -1,5 +1,5 @@
-name: parallel
-description: A new Flutter package project.
+name: parallel_dart
+description: Execute code in multicore easily.
 version: 0.0.1
 repository: https://github.com/ekasetiawans/parallel
 

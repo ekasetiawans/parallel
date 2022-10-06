@@ -1,3 +1,3 @@
-library parallel;
+library parallel_dart;
 
 export 'src/parallel.dart';
