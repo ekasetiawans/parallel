@@ -15,13 +15,6 @@ class Parallel {
 
   static SendPort? _mainSendPort;
   static final Map<int, Completer> _mainCompleter = {};
-  static Future<T> main<T>() async {
-    final task = _TaskMessenger(arg: T, id: _messengerId++);
-    final completer = Completer<T>();
-    _mainCompleter[task.id] = completer;
-    _mainSendPort?.send(task);
-    return completer.future;
-  }
 
   static Future<T> runInMain<T>(FutureOr<T> Function() fn) async {
     if (Parallel.isMainIsolate) {
@@ -40,13 +33,11 @@ class Parallel {
   final StreamController<TaskEvent> _controller = StreamController.broadcast();
   Stream<TaskEvent> get eventStream => _controller.stream;
   final FutureOr<void> Function()? onInitialization;
-  final FutureOr<dynamic> Function(Type type)? onDataRequested;
 
   static Future<void> initialize({
     required int numberOfIsolates,
     int maxConcurrentPerIsolate = 10,
     FutureOr<void> Function()? onInitialization,
-    FutureOr<dynamic> Function(Type type)? onDataRequested,
   }) async {
     if (_instance != null) {
       _instance!.dispose();
@@ -56,7 +47,6 @@ class Parallel {
       numberOfIsolates: numberOfIsolates,
       maxConcurrentPerIsolate: maxConcurrentPerIsolate,
       onInitialization: onInitialization,
-      onDataRequested: onDataRequested,
     );
   }
 
@@ -68,7 +58,6 @@ class Parallel {
     required this.numberOfIsolates,
     this.maxConcurrentPerIsolate = 10,
     this.onInitialization,
-    this.onDataRequested,
   }) {
     for (int i = 0; i < numberOfIsolates; i++) {
       _runner.add(
@@ -190,29 +179,6 @@ class _TaskRunner {
           final f = message.arg as FutureOr Function();
           try {
             final result = await f();
-            final port = await sendPortCompleter.future;
-            port.send(
-              _TaskMessenger(
-                arg: result,
-                id: message.id,
-              ),
-            );
-          } catch (e) {
-            final port = await sendPortCompleter.future;
-            port.send(
-              _TaskMessenger(
-                id: message.id,
-                arg: _TaskError(
-                  id: message.id,
-                  error: e,
-                ),
-              ),
-            );
-          }
-        } else if (message.arg is Type) {
-          final t = message.arg as Type;
-          try {
-            final result = await parallel.onDataRequested?.call(t);
             final port = await sendPortCompleter.future;
             port.send(
               _TaskMessenger(
