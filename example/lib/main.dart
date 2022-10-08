@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isComputing = false;
   int number = 0;
 
-  void simulateHeavyComputing(int num) {
+  static void simulateHeavyComputing(int num) {
     for (var i = 0; i < num; i++) {
       // Literally do nothing here
     }
@@ -60,8 +60,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Counter : ${number}'),
-            SizedBox(height: 12),
+            Text('Counter : $number'),
+            const SizedBox(height: 12),
             ElevatedButton(
               onPressed: isComputing
                   ? null
@@ -71,23 +71,31 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
                       simulateHeavyComputing(1000000000000);
                     },
-              child: Text('Run heavy process without parallel - It Will Free'),
+              child: const Text(
+                  'Run heavy process without parallel - It Will Free'),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             ElevatedButton(
               onPressed: isComputing
                   ? null
-                  : () {
+                  : () async {
                       setState(() {
                         isComputing = true;
                       });
-                      Parallel.run(() async {
+
+                      await Parallel.run(() async {
                         simulateHeavyComputing(1000000000000);
+
+                        print('Heavy Computing Is Done');
+                      });
+
+                      setState(() {
+                        isComputing = false;
                       });
                     },
-              child: Text('Run heavy process with parallel - Not Freeze'),
+              child: const Text('Run heavy process with parallel - Not Freeze'),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
           ],
         ),
       ),
@@ -97,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
             number++;
           });
         },
-        child: Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
