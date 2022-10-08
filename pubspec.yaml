@@ -1,6 +1,6 @@
 name: parallel_dart
 description: Execute code in multicore easily.
-version: 0.0.1
+version: 0.0.1+1
 repository: https://github.com/ekasetiawans/parallel
 
 environment:
