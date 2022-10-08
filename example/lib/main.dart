@@ -70,9 +70,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         isComputing = true;
                       });
                       simulateHeavyComputing(1000000000000);
+                      setState(() {
+                        isComputing = false;
+                      });
                     },
               child: const Text(
-                  'Run heavy process without parallel - It Will Free'),
+                  'Run heavy process without parallel - It Will Freeze'),
             ),
             const SizedBox(height: 12),
             ElevatedButton(
