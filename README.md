@@ -7,10 +7,12 @@ Give more power to your app with multicore processing.
 ## Getting started
 
 ```dart
+    import 'dart:io';
+
     void main() {
         // run core dedicated isolates.
         Parallel.initialize(
-            numberOfIsolates: Platform.numberOfProcessor -1, // minus one used for allocating to main isolate.
+            numberOfIsolates: Platform.numberOfProcessors -1, // minus one used for allocating to main isolate.
             maxConcurrentPerIsolate: 100, // limit to 100 execution per isolate
             onInitialization: () {
                 // register your dependency injection
